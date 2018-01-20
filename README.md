@@ -3,7 +3,7 @@ _inspired by Express_
 
 SOSSH is a server for streaming data over SSH. SOSSH is still in the early stages of development.
 
-![]('assets/sossh_example.gif')
+![](assets/sossh_example.gif)
 
 ## Install
 
