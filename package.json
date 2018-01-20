@@ -1,15 +1,20 @@
 {
   "name": "sosh",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.0.1",
+  "description": "stream over ssh",
+  "main": "src/sossh.js",
   "scripts": {
     "lint": "node_modules/.bin/jshint src/*.js src/*/*.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Calum Forster",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/calum/sossh.git"
+  },
   "license": "ISC",
+  "keywords": ["ssh", "sossh", "stream", "server"],
   "dependencies": {
     "ssh2": "^0.5.5"
   },
