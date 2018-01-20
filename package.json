@@ -1,0 +1,19 @@
+{
+  "name": "sosh",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "node_modules/.bin/jshint src/*.js src/*/*.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ssh2": "^0.5.5"
+  },
+  "devDependencies": {
+    "jshint": "^2.9.5"
+  }
+}
