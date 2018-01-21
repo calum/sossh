@@ -3,6 +3,8 @@ _inspired by Express_
 
 SOSSH is a server for streaming data over SSH. SOSSH is still in the early stages of development.
 
+For a basic chat room example with multiple connections, built with SOSSH, check out `test/chatroom_example.js`.
+
 ![](assets/sossh_example.gif)
 
 ## Install
@@ -16,7 +18,7 @@ $ npm install --save sossh
 ### Write an App
 
 ```js
-var sossh = require('../src/sossh')
+var sossh = require('sossh')
 var fs = require('fs')
 var path = require('path')
 

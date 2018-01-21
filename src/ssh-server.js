@@ -62,6 +62,15 @@ function init(privateKey, publicKey, app, options) {
           var stream = accept()
 
           stream.on('data', (chunk) => {
+            // add basic functionality
+            stream.sendLine = function(message) {
+              stream.write(message)
+              // start the next line
+              stream.write('\x1b[1B')
+              // go to the beginning of the line
+              stream.write('\x1b['+session.window.cols+'D')
+            }
+
             app.handle(session.window, {buffer: chunk}, stream)
           })
         })

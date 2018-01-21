@@ -1,5 +1,5 @@
 {
-  "name": "sosh",
+  "name": "sossh",
   "version": "0.0.1",
   "description": "stream over ssh",
   "main": "src/sossh.js",

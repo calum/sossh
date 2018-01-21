@@ -2,6 +2,18 @@ var handler = {
   use: function(handle) {
     handler.handles.push(handle)
   },
+  broadcast: function(clients) {
+    if (clients.length == 0) {
+      return
+    }
+    clients.forEach(function(client) {
+      try {
+        handler.handle(client.window, {buffer: ''}, client.res)
+      } catch (error) {
+        throw new Error('You cannot write to an ended stream: '+error.message)
+      }
+    })
+  },
 
   handles: [],
 
