@@ -4,6 +4,7 @@ _inspired by Express_
 SOSSH is a server for streaming data over SSH. SOSSH is still in the early stages of development.
 
 For a basic chat room example with multiple connections, built with SOSSH, check out `test/chatroom_example.js`.
+See the example SOSSH chat room running at `$ ssh 34.240.227.222 -p 2222` (skip any login questions with `Enter`).
 
 ![](assets/sossh_example.gif)
 
