@@ -6,10 +6,10 @@
 /**
 * Clears the terminal window
 **/
-function clear(window, req, res, next) {
+function clear(window, stream, next) {
   // clear the terminal
-  res.write('\033[2J')
-  res.write('\033[0;0H')
+  stream.write('\033[2J')
+  stream.write('\033[0;0H')
   next()
 }
 
@@ -23,36 +23,15 @@ var exitOnKey = {
   setKey: function(key) {
     exitOnKey.key = key
   },
-  exit: function(window, req, res, next) {
-    if (req.buffer.toString('hex') == exitOnKey.key) {
-      res.write('\033[2J')
-      res.exit(0)
-      res.end()
+  exit: function(window, stream, next) {
+    if (stream.hex == exitOnKey.key) {
+      stream.write('\033[2J')
+      stream.exit(0)
+      stream.end()
     } else {
       next()
     }
   }
-}
-
-/**
-* If an arrow key was pressed then add direction to req
-**/
-function arrowKeyParser(window, req, res, next) {
-  switch (req.buffer.toString('hex')) {
-    case '1b5b43':
-      req.direction = 'right'
-      break
-    case '1b5b42':
-      req.direction = 'down'
-      break
-    case '1b5b44':
-      req.direction = 'left'
-      break
-    case '1b5b41':
-      req.direction = 'up'
-      break
-  }
-  next(req)
 }
 
 /**
@@ -68,11 +47,11 @@ var ui = {
       selected: false
     })
   },
-  generate: function(window, req, res, next) {
-    res.write('\033[0;0H')
+  generate: function(window, stream, next) {
+    stream.write('\033[0;0H')
 
     // read the input
-    switch (req.direction) {
+    switch (stream.key) {
       case 'up':
         ui.cursor--
         if (ui.cursor < 0) {
@@ -86,24 +65,24 @@ var ui = {
         }
         break
     }
-    if (req.buffer.toString('hex') == '20') {
+    if (stream.hex == '20') {
       ui.options[ui.cursor].selected = !ui.options[ui.cursor].selected
       ui.options[ui.cursor].callback()
     }
 
     // print the user interface to the terminal
-    res.write('\x1b['+window.cols+'F')
+    stream.write('\x1b['+window.cols+'F')
 
     var spacing = Math.round((window.rows - ui.options.length)/2)
 
     // fill in the top of the screen
     for (var i=0; i<spacing; i++) {
       for (var j=0; j<window.cols; j++) {
-        res.write('\x1b[30;106m \x1b[0;0m')
+        stream.write('\x1b[30;106m \x1b[0;0m')
       }
-      res.write('\x1b[1B') // start the next line
+      stream.write('\x1b[1B') // start the next line
       // go to the beginning of the line
-      res.write('\x1b['+window.cols+'D')
+      stream.write('\x1b['+window.cols+'D')
     }
 
     // add the options
@@ -119,26 +98,26 @@ var ui = {
         row = '\x1b[97;46m'+option+ui.options[i].name +'\x1b[0;0m'
       }
 
-      res.write('\x1b[30;106m   \x1b[0;0m')
-      res.write(row)
+      stream.write('\x1b[30;106m   \x1b[0;0m')
+      stream.write(row)
 
       for (var j=0; j<window.cols-ui.options[i].name.length-3-4; j++) {
-        res.write('\x1b[30;106m \x1b[0;0m')
+        stream.write('\x1b[30;106m \x1b[0;0m')
       }
 
-      res.write('\x1b[1B') // start the next line
+      stream.write('\x1b[1B') // start the next line
       // go to the beginning of the line
-      res.write('\x1b['+window.cols+'D')
+      stream.write('\x1b['+window.cols+'D')
     }
 
     // add the rest of the screen
     for (var i=0; i<window.rows-spacing-ui.options.length; i++) {
       for (var j=0; j<window.cols; j++) {
-        res.write('\x1b[30;106m \x1b[0;0m')
+        stream.write('\x1b[30;106m \x1b[0;0m')
       }
-      res.write('\x1b[1B') // start the next line
+      stream.write('\x1b[1B') // start the next line
       // go to the beginning of the line
-      res.write('\x1b['+window.cols+'D')
+      stream.write('\x1b['+window.cols+'D')
     }
     next()
   }
@@ -148,6 +127,5 @@ var ui = {
 module.exports = {
   clear: clear,
   ui: ui,
-  arrowKeyParser: arrowKeyParser,
   exitOnKey: exitOnKey
 }

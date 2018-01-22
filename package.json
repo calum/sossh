@@ -7,15 +7,20 @@
     "lint": "node_modules/.bin/jshint src/*.js src/*/*.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "ssh",
+    "sossh",
+    "stream",
+    "server"
+  ],
   "author": "Calum Forster",
   "repository": {
     "type": "git",
     "url": "https://github.com/calum/sossh.git"
   },
   "license": "ISC",
-  "keywords": ["ssh", "sossh", "stream", "server"],
   "dependencies": {
+    "blessed": "^0.1.81",
     "ssh2": "^0.5.5"
   },
   "devDependencies": {

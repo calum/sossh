@@ -21,26 +21,26 @@ function update(username) {
 
 app.use(sossh.utils.clear)
 
-app.use(function(window, req, res, next) {
+app.use(function(window, stream, next) {
   if (!window.username) {
     if (!window.usernameRequested) {
-      res.write('Enter username: ')
+      stream.write('Enter username: ')
       window.usernameRequested = true
       return
     } else {
-      if (req.buffer.toString('hex') == '0d') {
+      if (stream.hex == '0d') {
         window.username = window.newUsername
         chatHistory.push(window.username +' has joined the session.')
-        users.push({window: window, res: res})
-        req.buffer = ''
+        users.push({window: window, stream: stream})
+        stream.request = ''
         update()
         return
       }
       if (!window.newUsername) {
         window.newUsername = ''
       }
-      window.newUsername += req.buffer.toString('utf8')
-      res.write('Enter username: ' + window.newUsername)
+      window.newUsername += stream.string
+      stream.write('Enter username: ' + window.newUsername)
       return
     }
   } else {
@@ -48,34 +48,52 @@ app.use(function(window, req, res, next) {
   }
 })
 
-app.use(function(window, req, res, next) {
-  if (req.buffer.toString('utf8') == 'q') {
-    res.write('goodbye '+ window.username + '\n')
+app.use(function(window, stream, next) {
+  console.log(stream.string)
+  if (stream.string == 'q') {
+    stream.write('goodbye '+ window.username + '\n')
     chatHistory.push(window.username +' has quit the session.')
     users = users.filter(user => user.window.username != window.username)
     update(window.username)
-    res.exit(0)
-    res.end()
+    stream.exit(0)
+    stream.end()
     return
   }
-  else if (req.buffer.toString('hex') == '0d') {
+  else if (stream.hex == '0d') {
     chatHistory.push(window.username + ': ' + window.message)
     update(window.username)
     window.message = ''
-  } else if (req.buffer.toString('hex') == '7f'){
+  } else if (stream.hex == '7f'){
     window.message = window.message.slice(0, -1)
+  } else if (stream.key == 'up' || stream.key == 'down') {
+    // do nothing
   } else {
-    if (req.buffer.toString('utf8') == 'undefined' || req.buffer == '') {
+    if (stream.string == 'undefined' || stream.string == '') {
       window.message = ''
     } else {
-      window.message += req.buffer.toString('utf8')
+      window.message += stream.string
+    }
+  }
+
+  if (!window.line) {
+    window.line = 0
+  }
+
+  if (stream.key == 'up') {
+    window.line++
+  } else if (stream.key == 'down') {
+    window.line--
+    if (window.line < 0) {
+      window.line = 0
     }
   }
 
   // write out the chat history
+  var lines = []
+
   if (chatHistory.length > 0) {
     chatHistory.forEach(function(line) {
-      res.sendLine('| '+line)
+      lines.push('| '+line)
     })
   }
 
@@ -83,13 +101,27 @@ app.use(function(window, req, res, next) {
     window.message = ''
   }
 
-  res.sendLine('|___________ ')
-  res.sendLine('')
-  res.sendLine(' ___________')
-  res.sendLine('| Press "q" to exit.')
-  res.sendLine('|-------------------')
-  res.sendLine('| Send message: '+window.message)
-  res.sendLine('|___________')
+  // print out the window.rows number of lines
+  var start_line = lines.length - (window.rows - 7) - window.line
+  if (start_line < 0) {
+    start_line = 0
+  }
+  var end_line = start_line + window.rows - 7
+  if (end_line > lines.length) {
+    end_line = lines.length
+  }
+  for (var i=start_line; i<end_line; i++) {
+    stream.sendLine(lines[i])
+  }
+
+  stream.sendLine('|___________ ')
+  stream.sendLine('')
+  stream.sendLine(' ___________')
+  stream.sendLine('| Press "q" to exit.')
+  stream.sendLine('|-------------------')
+  stream.sendLine('| Send message: '+window.message)
+  stream.sendLine('|___________')
+
   next()
 })
 

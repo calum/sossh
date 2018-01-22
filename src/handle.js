@@ -7,11 +7,12 @@ var handler = {
       return
     }
     clients.forEach(function(client) {
-      try {
-        handler.handle(client.window, {buffer: ''}, client.res)
-      } catch (error) {
-        throw new Error('You cannot write to an ended stream: '+error.message)
-      }
+      //try {
+        client.stream.request = null
+        handler.handle(client.window, client.stream)
+      //} catch (error) {
+      //  throw new Error('You cannot write to an ended stream: '+error.message)
+      //}
     })
   },
 
@@ -27,12 +28,10 @@ var handler = {
   *
   * @param window
   *     {rows, cols}
-  * @param request
+  * @param stream
   *     buffer object which represents a key press from the client
-  * @param response
-  *     a writable stream which sends data to the client
   **/
-  handle: function(window, request, response, index) {
+  handle: function(window, stream, index) {
     if (!index) {
       index = 0
     }
@@ -42,13 +41,13 @@ var handler = {
     }
 
     // call the handle
-    handler.handles[index](window, request, response, function(req) {
-      if (!req) {
-        var req = request
+    handler.handles[index](window, stream, function(new_stream) {
+      if (!new_stream) {
+        new_stream = stream
       }
 
       // call the next handle
-      handler.handle(window, req, response, index+1)
+      handler.handle(window, new_stream, index+1)
     })
 
   }

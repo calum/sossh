@@ -5,11 +5,15 @@ var handle = require('./handle')
 var sshServer = require('./ssh-server')
 var utilities = require('./utilities')
 
+var functionality = require('./functionality')
+
 function init(options) {
   var privateKey = options.privateKey
   var publicKey = options.publicKey
 
   var app = handle()
+
+  app.use(functionality.addFunctions)
 
   var server = sshServer.init(privateKey, publicKey, app, options)
 
