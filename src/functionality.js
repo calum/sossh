@@ -11,6 +11,11 @@ function addFunctions(window, stream, next) {
     window.location = '/'
   }
 
+  if (window.changed) {
+    window.changed = false
+    stream.emit('window-resize')
+  }
+
   stream.clean = function() {
     stream.request = ''
   }

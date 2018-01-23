@@ -40,22 +40,26 @@ function init(privateKey, publicKey, app, options) {
 
         session.window = {
           cols: 80,
-          rows: 24
+          rows: 24,
+          terminal: 'ansi'
         }
 
         session.on('window-change', (accept, reject, info) => {
           session.window = {
             cols: info.cols,
-            rows: info.rows
+            rows: info.rows,
+            terminal: info.term,
+            changed: true
           }
-          accept()
+
         })
 
         session.on('pty', (accept, reject, info) => {
           var session = accept()
           session.window = {
             cols: info.cols,
-            rows: info.rows
+            rows: info.rows,
+            terminal: info.term
           }
         })
 
