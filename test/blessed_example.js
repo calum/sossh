@@ -11,11 +11,8 @@ var options = {
 
 var app = sossh(options)
 
-app.use(function(window, stream, next) {
+app.display('/', function(window, stream, next) {
   console.log(stream.string)
-  if (window.location != '/') {
-    next(stream)
-  }
 
   window.location = '/user-input'
 
@@ -99,18 +96,15 @@ app.use(function(window, stream, next) {
   })
 
   screen.key(['escape', 'q', 'C-c'], function(ch, key) {
-    return process.exit(0)
+    return stream.end()
   })
 
   screen.render()
-
 })
 
-app.use(function(window, stream, next) {
+app.display('/chat-room', function(window, stream, next) {
   console.log(stream.string)
-  if (window.location != '/chat-room') {
-    next(stream)
-  }
+  window.location = '/chat-room/'+window.username
 
   stream.rows = window.rows
   stream.columns = window.cols
@@ -160,7 +154,6 @@ app.use(function(window, stream, next) {
   box.focus()
 
   screen.render()
-
 })
 
 app.listen(2222, '', () => {

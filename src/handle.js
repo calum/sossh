@@ -2,17 +2,22 @@ var handler = {
   use: function(handle) {
     handler.handles.push(handle)
   },
+  display: function(name, handle) {
+    display_handle = function(window, stream, next) {
+      if (window.location != name) {
+        return next(stream)
+      }
+      handle(window, stream, next)
+    }
+    handler.handles.push(display_handle)
+  },
   broadcast: function(clients) {
     if (clients.length == 0) {
       return
     }
     clients.forEach(function(client) {
-      //try {
-        client.stream.request = null
-        handler.handle(client.window, client.stream)
-      //} catch (error) {
-      //  throw new Error('You cannot write to an ended stream: '+error.message)
-      //}
+      client.stream.request = null
+      handler.handle(client.window, client.stream)
     })
   },
 

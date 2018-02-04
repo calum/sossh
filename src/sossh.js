@@ -21,6 +21,9 @@ function init(options) {
     use: function(handle) {
       app.use(handle)
     },
+    display: function(name, handle) {
+      app.display(name, handle)
+    },
     update: function(clients) {
       // forces an update to all sessions in clients array
       app.broadcast(clients)

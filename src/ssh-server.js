@@ -41,17 +41,15 @@ function init(privateKey, publicKey, app, options) {
         session.window = {
           cols: 80,
           rows: 24,
-          terminal: 'ansi'
+          terminal: 'ansi',
+          location: '/'
         }
 
         session.on('window-change', (accept, reject, info) => {
-          session.window = {
-            cols: info.cols,
-            rows: info.rows,
-            terminal: info.term,
-            changed: true
-          }
-
+          session.window.cols = info.cols
+          session.window.rows = info.rows
+          session.window.terminal = info.term
+          session.window.changed = true
         })
 
         session.on('pty', (accept, reject, info) => {
@@ -59,7 +57,8 @@ function init(privateKey, publicKey, app, options) {
           session.window = {
             cols: info.cols,
             rows: info.rows,
-            terminal: info.term
+            terminal: info.term,
+            location: '/'
           }
         })
 

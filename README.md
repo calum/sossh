@@ -109,3 +109,14 @@ app.listen(2222, '', () => {
   console.log('listening on port 2222')
 })
 ```
+
+## Using blessed user interfaces
+```js
+app.display('/', (window, stream) => {
+  // get a username
+})
+
+app.display('/chat-room', (window, stream) => {
+  // display the chat room
+})
+```
